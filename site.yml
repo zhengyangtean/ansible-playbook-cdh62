@@ -1,0 +1,4 @@
+---
+# master control
+- name: Running Common
+  import_playbook: common.yml

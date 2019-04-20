@@ -1,0 +1,32 @@
+---
+# Task file for ntpmaster
+-   name: "ntpmaster :: Removing default NTP host"
+    lineinfile:
+        path: /etc/ntp.conf
+        state: absent
+        regexp: '.*centos.pool.ntp.org iburst'
+
+-   name: "ntpmaster :: Inserting fudge stratum"
+    lineinfile:
+        path: /etc/ntp.conf
+        state: present
+        line: "{{ item }}"
+    with_items:
+        - "server 127.127.1.0"
+        - "fudge 127.127.1.0 stratum 6"
+        - "restrict 192.168.2.1 mask 255.255.0.0 nomodify notrap"
+    register: ntp
+
+-   name: "ntpmaster :: Opening firewall for NTP"
+    firewalld:
+        service: ntp
+        permanent: yes
+        state: enabled
+    when: ntp.changed
+
+-   name: "ntpmaster :: Restart NTP for effect"
+    systemd:
+        name: ntpd
+        state: restarted
+        enabled: yes
+    when: ntp.changed

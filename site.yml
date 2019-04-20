@@ -1,4 +1,13 @@
 ---
 # master control
-- name: Running Common
-  import_playbook: common.yml
+- hosts: all
+  roles:
+  - role: common
+
+- hosts: ntpmaster
+  roles:
+  - role: ntpmaster
+
+- hosts: ntpslave
+  roles:
+  - role: ntpslave

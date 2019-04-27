@@ -11,3 +11,11 @@
 - hosts: ntpslave
   roles:
   - role: ntpslave
+
+- hosts: cdh
+  roles:
+  - role: cdh
+
+- hosts: cm
+  roles:
+  - role: cm

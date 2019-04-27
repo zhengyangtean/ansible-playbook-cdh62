@@ -11,10 +11,29 @@
         state: present
         key: "https://archive.cloudera.com/cm6/6.2.0/redhat7/yum/RPM-GPG-KEY-cloudera"
 
--   name: "cdh :: install oracle jdk"
+-   name: "cdh :: install oracle jdk & epel"
     yum:
         name: "{{ packages }}"
     vars:
         packages:
         - "oracle-j2sdk1.8"
+        - "epel-release"
+        - "postgresql-server"
+        - "postgresql-contrib"
+    register: postgresql     
+
+-   name: "cm :: postgres-init"
+    command: "postgresql-setup initdb"
+    when: postgresql.changed  
+
+-   name: "cdh :: install pip"
+    yum:
+        name: "{{ packages }}"
+    vars:
+        packages:
+        - "python-pip"
+
+-   name: "cdh :: install psycopg2"
+    pip:
+        name: "psycopg2-binary"
 

@@ -68,3 +68,47 @@
         state: "restarted"
         enabled: yes
     when: pg.changed
+
+-   name: "cm :: creating postgresql dbs"
+    become: yes
+    become_user: postgres
+    postgresql_db:
+        name: "{{ item }}"
+        encoding: UTF-8
+    with_items:
+        - scm
+        - amon
+        - rman
+        - hue
+        - metastore
+        - sentry
+        - oozie
+   
+
+-   name: "cm :: creating postgresql user"
+    become: yes
+    become_user: postgres
+    postgresql_user:
+        name: "{{ item }}"
+        password: "{{ item }}"
+        encrypted: no
+        db: "{{ item }}"
+        priv: ALL
+    with_items:
+        - scm
+        - amon
+        - rman
+        - hue
+        - metastore
+        - sentry
+        - oozie
+   
+-   name: "cm :: initialize scm db"
+    command: "/opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm scm"
+    when: pg.changed
+
+-   name: "cm :: enable scm"
+    systemd:
+        name: "cloudera-scm-server"
+        state: "started"
+        enabled: yes

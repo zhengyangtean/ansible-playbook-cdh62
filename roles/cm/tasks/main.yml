@@ -10,9 +10,9 @@
         - "cloudera-manager-server"
     register: cm
 
--   name: "cm :: enable auto-TLS"
-    command: "sudo JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera /opt/cloudera/cm-agent/bin/certmanager setup --configure-services"
-    when: cm.changed
+#-   name: "cm :: enable auto-TLS"
+#    command: "sudo JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera /opt/cloudera/cm-agent/bin/certmanager setup --configure-services"
+#    when: cm.changed
 
 -   name: "cm :: enable postgresql"
     systemd:

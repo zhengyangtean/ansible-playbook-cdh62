@@ -22,7 +22,16 @@
         - "postgresql-contrib"
     register: postgresql     
 
--   name: "cm :: postgres-init"
+-   name: "cdh :: setup local for database"
+    lineinfile:
+        path: /etc/locale.conf
+        state: present
+        line: "{{ item }}"
+    with_items:
+        - 'LC_ALL="en_US.UTF-8"'
+
+
+-   name: "cdh :: postgres-init"
     command: "postgresql-setup initdb"
     when: postgresql.changed  
 

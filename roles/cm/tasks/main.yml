@@ -19,3 +19,52 @@
         name: "postgresql"
         state: started
         enabled: yes
+
+-   name: "cm :: postgres pg_hba.conf"
+    lineinfile:
+        path: "/var/lib/pgsql/data/pg_hba.conf"
+        state: present
+        insertbefore: "host    all             all             127.0.0.1/32            ident"
+        line: "{{ item }}"
+    with_items:
+        - "host all all 127.0.0.1/0 md5"
+
+-   name: "cm :: postgres postgresql.conf"
+    lineinfile:
+        path: "/var/lib/pgsql/data/postgresql.conf"
+        state: present
+        line: "{{ item }}"
+    with_items:
+        - "listen_addresses = '*'"
+
+-   name: "cm :: postgres tuning"
+    lineinfile:
+        path: "/var/lib/pgsql/data/postgresql.conf"
+        state: present
+        line: "shared_buffers = 256MB                   # min 128kB"
+
+-   name: "cm :: postgres tuning"
+    lineinfile:
+        path: "/var/lib/pgsql/data/postgresql.conf"
+        state: present
+        line: "wal_buffers = 8MB                       # min 32kB, -1 sets based on shared_buffers"
+
+-   name: "cm :: postgres tuning"
+    lineinfile:
+        path: "/var/lib/pgsql/data/postgresql.conf"
+        state: present
+        line: "checkpoint_segments = 16                # in logfile segments, min 1, 16MB each"
+
+-   name: "cm :: postgres tuning"
+    lineinfile:
+        path: "/var/lib/pgsql/data/postgresql.conf"
+        state: present
+        line: "checkpoint_completion_target = 0.9     # checkpoint target duration, 0.0 - 1.0"
+    register: pg
+
+-   name: "cm :: restart postgresql"
+    systemd:
+        name: "postgresql"
+        state: "restarted"
+        enabled: yes
+    when: pg.changed

@@ -1,2 +1,15 @@
 ---
 # Task file for common
+-   name: "common :: installing yum packages"
+    yum:
+        name: "{{ packages }}"
+    vars:
+        packages:
+        - ntp
+        - firewalld
+
+-   name: "common :: disable chrony (ntp conflict)"
+    systemd:
+        name: chronyd
+        state: stopped
+        enabled: no

@@ -1,2 +1,41 @@
 ---
 # Task file for ntpslave
+-   name: "ntpslave :: Removing default NTP host"
+    lineinfile:
+        path: /etc/ntp.conf
+        state: absent
+        regexp: '.*centos.pool.ntp.org iburst'
+
+-   name: "ntpslave :: Inserting fudge stratum"
+    lineinfile:
+        path: /etc/ntp.conf
+        state: present
+        line: "{{ item }}"
+    with_items:
+        - "server 192.168.2.11"
+    register: ntp
+
+-   name: "ntpslave :: Opening firewall for NTP"
+    firewalld:
+        service: ntp
+        permanent: yes
+        state: enabled
+    when: ntp.changed
+
+-   name: "ntpslave :: Restart Firewalld for effect"
+    systemd:
+        name: firewalld
+        state: restarted
+        enabled: yes
+    when: ntp.changed
+
+-   name: "ntpslave :: Restart NTP for effect"
+    systemd:
+        name: ntpd
+        state: restarted
+        enabled: yes
+    when: ntp.changed
+
+
+
+  

@@ -24,6 +24,13 @@
         state: enabled
     when: ntp.changed
 
+-   name: "ntpmaster :: Restart firewall for effect"
+    systemd:
+        name: firewalld
+        state: restarted
+        enabled: yes
+    when: ntp.changed
+
 -   name: "ntpmaster :: Restart NTP for effect"
     systemd:
         name: ntpd

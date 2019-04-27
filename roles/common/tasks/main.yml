@@ -13,3 +13,32 @@
         name: chronyd
         state: stopped
         enabled: no
+
+-   name: "common :: set hostname"
+    hostname:
+        name: "{{ inventory_hostname }}"
+
+-   name: "common :: exchange hostname in /etc/hosts"
+    lineinfile:
+        path: /etc/hosts
+        state: present
+        line: "{{ hostvars[item]['ansible_host'] }} {{item}}"
+    with_items:
+        - "{{ groups['all'] }}"
+
+-   name: "common :: set FQDN for this host network"
+    lineinfile:
+        path: /etc/sysconfig/network
+        state: present
+        line: "HOSTNAME={{ inventory_hostname }}"
+
+-   name: "common :: disable firewall (CDH recommendation)"
+    systemd:
+        name: firewalld
+        state: stopped
+        enabled: no
+
+-   name: "common :: set selinux permissive (CDH recommendation)"
+    selinux:
+        policy: targeted
+        state: permissive

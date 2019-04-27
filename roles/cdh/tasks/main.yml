@@ -1,0 +1,19 @@
+---
+# Task file for cdh
+-   name: "cdh :: downloading cdh repo"
+    get_url:
+        url: "https://archive.cloudera.com/cm6/6.2.0/redhat7/yum/cloudera-manager.repo"
+        dest: "/etc/yum.repos.d/"
+    register: repofile
+
+-   name: "cdh :: import repo signing GPG key"
+    rpm_key:
+        state: present
+        key: "https://archive.cloudera.com/cm6/6.2.0/redhat7/yum/RPM-GPG-KEY-cloudera"
+
+-   name: "cdh :: install oracle jdk"
+    yum:
+        name: "{{ packages }}"
+    vars:
+        packages:
+        - "oracle-j2sdk1.8"
